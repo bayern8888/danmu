@@ -1,0 +1,201 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>我的弹幕</title>
+<style style="display:block" contentEditable>
+    html,body{margin:0px;padding:0px;width: 100%;height:100%;font-family: "微软雅黑";font-size: 62.5%;background: #ccc;}
+    .boxDom {
+        width:100%;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+    .idDom {
+        width: 100%;
+        height: 60px;
+        background: #666;
+        position: fixed;
+        bottom: 0px;
+    }
+    .content {
+        display: inline-block;
+        width:430px;
+        height: 40px;
+        position: absolute;
+        left: 0px;
+        right: 0px;
+        top:0px;
+        bottom:0px;
+        margin:auto;
+    }
+    .title {
+        display: inline;
+        font-size: 4em;
+        vertical-align:bottom;
+        color:#fff;
+    }
+    .text {
+        border:none;
+        width:300px;
+        height: 30px;
+        border-radius: 5px;
+        font-size: 2.4em;
+    }
+    .btn {
+        width:60px;
+        height: 30px;
+        background: #f90000;
+        border:none;
+        color:#fff;
+        font-size: 2.4em;
+    }
+    .string {
+        width:300px;
+        height: 40px;
+        position: absolute;
+        overflow: hidden;
+        color:#000;
+        font-size: 4em;
+        line-height: 1.5em;
+        cursor: pointer;
+        white-space:nowrap;
+        /*文字模糊效果*/
+/*        color: transparent;
+        text-shadow: #111 0 0 5px;*/
+    }
+</style>
+</head>
+
+<body>
+<div class="boxDom" id="boxDom">
+    <div class="idDom" id="idDom">
+        <div class="content">
+            <p class="title">输入:</p>
+            <input type="text" class="text" id="text" />
+            <button type="button" class="btn" id="btn">回车！</button>
+        </div>
+    </div>
+</div>
+</body>
+<script language="javascript" src="http://apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
+<script language="javascript">
+  $(function(){
+    // 屏蔽鼠标右键
+    // document.oncontextmenu = function(){return false;} 
+    /** 屏蔽复制网页内容 */ 
+    document.body.oncopy = function(){return false;} 
+    /** 屏蔽剪切网页内容 */ 
+    document.body.oncut = function(){return false;} 
+
+
+    $("#text").focus();
+    var pageW = $(document).width();
+    var pageH = $(document).height();
+
+    var top;
+    var right;
+    var width = pageW;
+
+    var boxDom = $("#boxDom");
+    var btn = $("#btn");
+
+    btn.bind("click",auto);
+    document.onkeydown=function(){
+        if(event.keyCode == 13){
+            auto();
+        }
+    }
+
+    function auto(){
+        //01自动生成名字
+        function randomName(){
+            var str = ['美辰','良辰','紫雨','蓝梦','轩辕','中军','大河','明道','加一','壬子','冰释','美姬','必应','谷歌','三星','汝尼','葛亮','玄德','幕府','茶轧','阿斯','恢复','法定','折线','南哥','老公','额外'];
+            var name = ["李王张刘陈杨赵黄周吴徐孙胡朱高林何郭马罗梁宋郑谢韩唐冯于董萧程柴袁邓许傅沈曾彭吕苏卢蒋蔡贾丁魏薛叶阎余潘杜戴夏钟汪田任姜"];
+            name =name.join();
+
+            var str01 = ['美','近','子','元','梦','仁','克','学','宏','伟','伯','威','生','震','常'];
+            var str02 = ['辰','硕','楠','勇','强','伟','远','明','元','友','恩','宝','佩','斯','平'];
+
+            var name_len = name.length;
+            var str_len01 = str01.length;
+            var str_len02 = str02.length;
+
+            var  p = '';
+            p = name.charAt(Math.floor(Math.random() * name_len)) + str01[(Math.floor(Math.random() * str_len01))] + str02[(Math.floor(Math.random() * str_len02))];
+            console.log(p);
+
+            return p;
+        }
+
+
+
+        // 02
+        function randomString(len) {
+        　　len = len || 32;
+        　　var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';    /****默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1****/
+        　　var maxPos = $chars.length;
+        　　var pwd = '';
+        　　for (i = 0; i < len; i++) {
+        　　　　pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
+        　　}
+        　　return pwd;
+        }
+
+        //03
+        // 生成随机的汉子
+        eval( "var word=" +  '"\\u' + (Math.round(Math.random() * 20901) + 19968).toString(16)+'"') 
+        // console.log(char);
+
+
+        var spanContent = $("<span class='string'></span>");
+        var value = $("#text").val();
+
+        // if(value.indexOf("妈")>-1){
+        //     value = value.replace("妈","*")
+        // };
+
+        // 屏蔽敏感词
+        var arr = ["你妈","傻逼","你麻痹","你妈逼","贱人","婊子","下贱","上床","开房","二逼","傻B","2B","鸡巴","JB","nima","shabi"];
+        var arr02 = ["操"];
+        for(var i=0;i<arr.length;i++){
+            value=value.replace(new RegExp(arr[i],'ig'),new Array(arr[i].length).join('**'));
+        };
+        for(var i=0;i<arr02.length;i++){
+            value=value.replace(new RegExp(arr02[i],'ig'),"*");
+        };
+
+        spanContent.text(randomName() + ":" + value);
+        
+        $("#text").val("");
+
+        top = pageW*Math.random();
+        // if( top > pageH-90){
+        //     top = pageH-90;
+        // }
+        spanContent.css({"left":top,bottom:0,"color":getColor()});
+        boxDom.append(spanContent);
+        spanContent.animate({"top":pageH-100},4000,"linear",function(){
+            $(this).remove();
+        });
+        console.log(getColor());
+
+
+        // 控制台生成模糊不清的文字
+        // var _log = console.log;
+        // console.log = function()  {
+        // _log.call(console, '%c' + [].slice.call(arguments).join(' '), 'color:transparent;text-shadow:0 0 2px rgba(0,0,0,.5);');
+        // };
+
+
+    }
+
+    function getColor(){
+        return "#"+("00000"+((Math.random()*16777215+0.5)>>0).toString(16)).slice(-6); 
+    }
+
+
+
+  });
+</script>
+</html>
